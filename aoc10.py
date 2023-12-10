@@ -38,7 +38,7 @@ def pathFinder(lines):
 
     while sFound == False: 
         count += 1
-        # print(currentOne)
+
         newPoint = []
 
         if currentOne == "S":
@@ -62,8 +62,7 @@ def pathFinder(lines):
             nextDir,found = findNextPos(currentOne,prevDir)
             prevDir = nextDir
 
-    # print(partOfPathArray)
-    print(polygonArray)
+    print("Maximum Distance:")
     print(count/2)
 
     poly1 = Polygon(polygonArray)
