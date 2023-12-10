@@ -13,12 +13,10 @@ def patternFinder(lines):
     for i in range(0,len(lines)):
         if lines[i] != "\n":
             temp_line = lines[i].split()
-            # print(temp_line)
             bigDiffArray = []
             
             diffArray = []
             for each_int in temp_line:
-                print(each_int)
                 diffArray.append(int(each_int))
             print(diffArray)    
             
@@ -32,7 +30,6 @@ def patternFinder(lines):
                     y = bigDiffArray[i][j]
 
                     diffArray.append(int(x)-int(y))
-                    print(diffArray)
 
                 bigDiffArray += [diffArray]
                 i += 1
