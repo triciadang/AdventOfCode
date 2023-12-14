@@ -34,8 +34,6 @@ def calculateLoad(lines):
         print(each)
         print(allLoads[each])
 
-    print((1000000000-6245)%28)
-    # print(fullArray)
     return
 
 
