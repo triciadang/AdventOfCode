@@ -1,5 +1,6 @@
 import numpy as np
 import itertools
+import re
 
 
 def day12():
@@ -20,48 +21,65 @@ def getSprings(lines):
     print(springMap)
     print(springNumArray)
 
-    for i in range(0,len(springMap)):
-        withOutNewLine = springMap[i].strip("\n")
-        eachNum = springNumArray[i]
-        eachNum = eachNum.strip("\n")
-        eachNum = eachNum.split(",")
-        print(eachNum)
+    for i in range(0,len(springNumArray)):
+        
+        currentNums = springNumArray[i]
+        currentNums = currentNums.strip("\n")
+        currentNums = currentNums.split(",")
+        regExp = ""
+        regExp += "[^#]"
+        for each_number in currentNums:
+            
+            regExp += "#|?" + "{" + str(each_number) + "}"
 
-        hashtagCount = springMap[i].count("#")
-        questionCount = springMap[i].count("?")
-
-        totalchar = 0
-
-        eachNum = springNumArray[i]
-        eachNum = eachNum.strip("\n")
-        eachNum = eachNum.split(",")
-        print(eachNum)
-
-        for each in eachNum:
-            totalchar += int(each)           
-        print(totalchar)
-
-        questionsNeededToBeFilled = totalchar - hashtagCount
-        print(questionsNeededToBeFilled)
+            print(regExp)
 
 
-        questionLocations = []
-        # declare for loop
-        for itr in range(0,len(springMap[i])):
- 
-      # check the condition
-            if (springMap[i][itr] == "?"):
- 
-          # print the indices
-                questionLocations += [itr]
 
-        print(questionLocations)
 
-        allCombos = itertools.combinations(questionLocations,questionsNeededToBeFilled)
-        for each in allCombos:
-            print(each)
-        print(allCombos)
+
+    # for i in range(0,len(springMap)):
+    #     withOutNewLine = springMap[i].strip("\n")
+    #     eachNum = springNumArray[i]
+    #     eachNum = eachNum.strip("\n")
+    #     eachNum = eachNum.split(",")
+    #     print(eachNum)
+
+    #     hashtagCount = springMap[i].count("#")
+    #     questionCount = springMap[i].count("?")
+
+    #     totalchar = 0
+
+    #     eachNum = springNumArray[i]
+    #     eachNum = eachNum.strip("\n")
+    #     eachNum = eachNum.split(",")
+    #     print(eachNum)
+
+    #     for each in eachNum:
+    #         totalchar += int(each)           
+    #     print(totalchar)
+
+    #     questionsNeededToBeFilled = totalchar - hashtagCount
     #     print(questionsNeededToBeFilled)
+
+
+    #     questionLocations = []
+    #     # declare for loop
+    #     for itr in range(0,len(springMap[i])):
+ 
+    #   # check the condition
+    #         if (springMap[i][itr] == "?"):
+ 
+    #       # print the indices
+    #             questionLocations += [itr]
+
+    #     print(questionLocations)
+
+    #     allCombos = itertools.combinations(questionLocations,questionsNeededToBeFilled)
+    #     for each in allCombos:
+    #         print(each)
+    #     print(allCombos)
+    # #     print(questionsNeededToBeFilled)
 
 
 
