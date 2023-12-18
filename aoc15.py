@@ -52,7 +52,9 @@ def day15_2():
     for each_key in range(0,256):
         n = 1
         for each_entry in range(1,len(boxDict[each_key]),2):
-            total += (each_key+1) * n * int(boxDict[each_key][each_entry])
+            result = (each_key+1) * n * int(boxDict[each_key][each_entry])
+            total += result
+            print(result)
             # print(total)
             n += 1
     print(total)

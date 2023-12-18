@@ -108,7 +108,7 @@ def calculateTiles(lines):
             if count > highestCount:
                 highestCount = count
 
-        
+    #top and bottom
     for j in range(1,lineLength-1):
         dir = "S"
         energizedArray = np.full((len(fullArray),lineLength),"")

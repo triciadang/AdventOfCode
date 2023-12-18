@@ -26,13 +26,18 @@ def getSprings(lines):
         currentNums = springNumArray[i]
         currentNums = currentNums.strip("\n")
         currentNums = currentNums.split(",")
-        regExp = ""
-        regExp += "[^#]"
-        for each_number in currentNums:
-            
-            regExp += "#|?" + "{" + str(each_number) + "}"
+        # regExp = ""
+        regExp = '[^#]*?|#{1}[^#]*?|#{1}[^#]*?|#{3}[^#]*'
+        p = re.compile(regExp)
+        m = re.findall(p,springMap[0])
+        print(m)
 
-            print(regExp)
+        # print(m)
+        # for each_number in currentNums:
+            
+            # regExp += "#|?" + "{" + str(each_number) + "}"
+
+        # \print(regExp)
 
 
 

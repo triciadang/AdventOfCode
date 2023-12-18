@@ -3,6 +3,7 @@ def day11():
     f = open("input11.txt","r")
     flines = f.readlines()
     galaxyDistance(flines)
+    
 def galaxyDistance(lines):
     galaxyMap = []
     for i in range(0,len(lines)):
