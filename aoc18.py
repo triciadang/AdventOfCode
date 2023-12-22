@@ -15,12 +15,47 @@ def calculateLava(lines):
     for i in range(0,len(lines)):
         temp_line = lines[i].strip("\n")
         temp_line = temp_line.split()
-        lineLength = len(temp_line)
         fullArray += [temp_line]
 
-    print(fullArray)
+    # drawDiagram(fullArray)
+    drawDiagram2(fullArray)
 
-    drawDiagram(fullArray)
+def drawDiagram2(fullArray):
+    startingCoordX = 0
+    startingCoordY = 0
+    coords = []
+    total_length = 0
+    coords.append([startingCoordX,startingCoordY])
+    
+    for i in range(0,len(fullArray)):
+
+        lengthPart = fullArray[i][2][2:7]
+        length = int(lengthPart,16)
+        total_length += int(length)
+        dir = fullArray[i][2][-2]
+        if dir == "0":
+            startingCoordX += length
+        elif dir == "2":
+            startingCoordX -= length
+        elif dir == "3":
+            startingCoordY += length
+        elif dir == "1":
+            startingCoordY -= length
+
+        coords.append([startingCoordX,startingCoordY])
+
+    print(coords)
+    pgon = Polygon(coords) # Assuming the OP's x,y coordinates
+
+    print(pgon.area)
+    print(total_length)
+
+    insideArea = pickTheorem(pgon.area,total_length)
+    print(insideArea)
+
+    totalArea = total_length+insideArea
+    print(totalArea)
+
 
 def drawDiagram(fullArray):
     startingCoordX = 0
@@ -28,11 +63,8 @@ def drawDiagram(fullArray):
     coords = []
     total_length = 0
     coords.append([startingCoordX,startingCoordY])
-    startingCoordX = 1
-    startingCoordY = 0
-    coords.append([startingCoordX,startingCoordY])
     
-    for i in range(len(fullArray)-1,-1,-1):
+    for i in range(0,len(fullArray)):
         dir = fullArray[i][0]
         length = fullArray[i][1]
         total_length += int(length)
@@ -48,20 +80,14 @@ def drawDiagram(fullArray):
 
         coords.append([startingCoordX,startingCoordY])
 
-    newCoords = []
-    for each in coords:
-        xCoord = each[0] + 1
-        yCoord = each[1] + 1
-        newCoords.append([xCoord,yCoord])
-
-    xs, ys = zip(*coords) #create lists of x and y values
+    xs, ys = zip(*coords)
 
     plt.figure()
     plt.plot(xs,ys) 
     plt.show()
 
 
-    pgon = Polygon(coords) # Assuming the OP's x,y coordinates
+    pgon = Polygon(coords)
 
     print(pgon.area)
     print(total_length)
@@ -82,12 +108,3 @@ def pickTheorem(area,boundary):
 
 
 day18()
-
-# coord = [[1,1], [2,1], [2,2], [1,2], [0.5,1.5]]
-# coord.append(coord[0]) #repeat the first point to create a 'closed loop'
-
-# xs, ys = zip(*coord) #create lists of x and y values
-
-# plt.figure()
-# plt.plot(xs,ys) 
-# plt.show()
