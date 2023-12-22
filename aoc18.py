@@ -22,7 +22,6 @@ def calculateLava(lines):
 
     drawDiagram(fullArray)
 
-
 def drawDiagram(fullArray):
     startingCoordX = 0
     startingCoordY = 0
@@ -33,23 +32,20 @@ def drawDiagram(fullArray):
     startingCoordY = 0
     coords.append([startingCoordX,startingCoordY])
     
-    for each_instr in fullArray:
-        dir = each_instr[0]
-        length = each_instr[1]
-        print(int(length))
+    for i in range(len(fullArray)-1,-1,-1):
+        dir = fullArray[i][0]
+        length = fullArray[i][1]
         total_length += int(length)
 
         if dir == "R":
-            startingCoordX += int(length)+1
+            startingCoordX += int(length)
         elif dir == "L":
-            startingCoordX -= int(length)+1
+            startingCoordX -= int(length)
         elif dir == "U":
-            startingCoordY += int(length)+1
+            startingCoordY += int(length)
         elif dir == "D":
-            startingCoordY -= int(length)+1
+            startingCoordY -= int(length)
 
-        print(startingCoordX)
-        print(startingCoordY)
         coords.append([startingCoordX,startingCoordY])
 
     newCoords = []
@@ -58,7 +54,6 @@ def drawDiagram(fullArray):
         yCoord = each[1] + 1
         newCoords.append([xCoord,yCoord])
 
-    print(coords)
     xs, ys = zip(*coords) #create lists of x and y values
 
     plt.figure()
@@ -70,6 +65,19 @@ def drawDiagram(fullArray):
 
     print(pgon.area)
     print(total_length)
+
+    insideArea = pickTheorem(pgon.area,total_length)
+    print(insideArea)
+
+    totalArea = total_length+insideArea
+    print(totalArea)
+
+
+
+def pickTheorem(area,boundary):
+    insidePoints = area - (.5*boundary) +1
+    return insidePoints
+
             
 
 
