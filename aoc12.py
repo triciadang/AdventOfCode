@@ -19,13 +19,17 @@ def getSprings(lines):
         springMap.append(springPart)
         springNumArray.append(springNum)
         
+    
     for i in range(0,len(springMap)):
-        print(i)
     # for i in range(0,1):
-        sprintAlrInArray = springMap[i].count("#")
+        newspringMap = springMap[i]
+        # newspringMap = springMap[i] * 5
+
+        sprintAlrInArray = newspringMap.count("#")
 
         springNumArr = springNumArray[i].strip("\n")
         springNumArr = springNumArr.split(",")
+        # springNumArr = springNumArr * 5
 
         totalSprings = 0
         for each_spring in springNumArr:
@@ -33,14 +37,14 @@ def getSprings(lines):
 
         springsNeeded = totalSprings - sprintAlrInArray
 
-        questionMarkCount = springMap[i].count("?")
+        questionMarkCount = newspringMap.count("?")
 
         newList = range(questionMarkCount)
 
         unique_combos = (itertools.combinations(newList,springsNeeded))
         combo_list = [list(t) for t in unique_combos]
 
-        current_work = list(springMap[i])
+        current_work = list(newspringMap)
         
         for j in range(0,len(combo_list)):
             tempWork = np.copy(current_work)
@@ -59,6 +63,7 @@ def getSprings(lines):
 
             if checkIfWorks(tempWork,springNumArr) == True:
                 total += 1
+
 
     print(total)
 
