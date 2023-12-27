@@ -1,6 +1,6 @@
 import numpy as np
 import itertools
-import re
+from functools import cache
 
 
 def day12():
@@ -11,6 +11,7 @@ def day12():
 def getSprings(lines):
     springMap = []
     springNumArray = []
+    total = 0
     for i in range(0,len(lines)):
         tempArray = lines[i].split(" ")
         springPart = tempArray[0]
@@ -18,147 +19,80 @@ def getSprings(lines):
         springMap.append(springPart)
         springNumArray.append(springNum)
         
-    print(springMap)
-    print(springNumArray)
+    for i in range(0,len(springMap)):
+        print(i)
+    # for i in range(0,1):
+        sprintAlrInArray = springMap[i].count("#")
 
-    for i in range(0,len(springNumArray)):
+        springNumArr = springNumArray[i].strip("\n")
+        springNumArr = springNumArr.split(",")
+
+        totalSprings = 0
+        for each_spring in springNumArr:
+            totalSprings += int(each_spring)
+
+        springsNeeded = totalSprings - sprintAlrInArray
+
+        questionMarkCount = springMap[i].count("?")
+
+        newList = range(questionMarkCount)
+
+        unique_combos = (itertools.combinations(newList,springsNeeded))
+        combo_list = [list(t) for t in unique_combos]
+
+        current_work = list(springMap[i])
         
-        currentNums = springNumArray[i]
-        currentNums = currentNums.strip("\n")
-        currentNums = currentNums.split(",")
-        # regExp = ""
-        regExp = '[^#]*?|#{1}[^#]*?|#{1}[^#]*?|#{3}[^#]*'
-        p = re.compile(regExp)
-        m = re.findall(p,springMap[0])
-        print(m)
+        for j in range(0,len(combo_list)):
+            tempWork = np.copy(current_work)
+            questionCount = 0
+            i = 0
+            k = 0
+            numChanged = 0
+            while numChanged < len(combo_list[j]):
+                if tempWork[i] == "?":
+                    if questionCount == combo_list[j][k]:
+                        tempWork[i] = "#"
+                        k += 1
+                        numChanged += 1
+                    questionCount += 1
+                i += 1
 
-        # print(m)
-        # for each_number in currentNums:
-            
-            # regExp += "#|?" + "{" + str(each_number) + "}"
+            if checkIfWorks(tempWork,springNumArr) == True:
+                total += 1
 
-        # \print(regExp)
-
-
-
-
-
-    # for i in range(0,len(springMap)):
-    #     withOutNewLine = springMap[i].strip("\n")
-    #     eachNum = springNumArray[i]
-    #     eachNum = eachNum.strip("\n")
-    #     eachNum = eachNum.split(",")
-    #     print(eachNum)
-
-    #     hashtagCount = springMap[i].count("#")
-    #     questionCount = springMap[i].count("?")
-
-    #     totalchar = 0
-
-    #     eachNum = springNumArray[i]
-    #     eachNum = eachNum.strip("\n")
-    #     eachNum = eachNum.split(",")
-    #     print(eachNum)
-
-    #     for each in eachNum:
-    #         totalchar += int(each)           
-    #     print(totalchar)
-
-    #     questionsNeededToBeFilled = totalchar - hashtagCount
-    #     print(questionsNeededToBeFilled)
-
-
-    #     questionLocations = []
-    #     # declare for loop
-    #     for itr in range(0,len(springMap[i])):
- 
-    #   # check the condition
-    #         if (springMap[i][itr] == "?"):
- 
-    #       # print the indices
-    #             questionLocations += [itr]
-
-    #     print(questionLocations)
-
-    #     allCombos = itertools.combinations(questionLocations,questionsNeededToBeFilled)
-    #     for each in allCombos:
-    #         print(each)
-    #     print(allCombos)
-    # #     print(questionsNeededToBeFilled)
+    print(total)
 
 
 
+def checkIfWorks(tempWork,givenSpringMap):
+    j = 0
+    springCount = 0
+    # tempWork = ['?', '#', '#', '#', '?', '?', '?', '?', '?', '#', '#', '#']
+    
 
+    for i in range(0,len(tempWork)):
+        if j < len(givenSpringMap):
+            if tempWork[i] == "#":
+                springCount += 1
+            elif springCount != 0:
+                if springCount ==int(givenSpringMap[j]):
+                    j += 1
+                    springCount = 0
+                else:
+                    return False
+                
+    #make sure you went through the whole thing
+    if springCount != 0:
+        if springCount ==int(givenSpringMap[j]):
+            j += 1
+            springCount = 0
+        else:
+            return False
 
-
-
-
-
-
-
-
-
-# def getSprings(lines):
-#     springMap = []
-#     springNumArray = []
-#     for i in range(0,len(lines)):
-#         tempArray = lines[i].split(" ")
-#         springPart = tempArray[0]
-#         springNum = tempArray[1]
-#         springMap.append(springPart)
-#         springNumArray.append(springNum)
-        
-#     print(springMap)
-#     print(springNumArray)
-
-#     total = 0
-
-#     for i in range(0,len(springMap)):
-#         withOutNewLine = springMap[i].strip("\n")
-#         sectionArray = withOutNewLine.split(".")
-        
-#         hashtagArray = []
-#         questionCountArray = []
-#         for j in range(0,len(sectionArray)):
-#             if sectionArray[j] != "":
-#                 hashtagArray += [sectionArray[j].count("#")]
-#                 questionCountArray += [sectionArray[j].count("?")]
-
-#         if len(sectionArray) == len(springNumArray):
-
-
-
-#         print(hashtagArray)
-#         print(questionCountArray)
-        
-        # for j in range(len(sectionArray)-1,-1,-1):
-        #     each_section = sectionArray[j]
-        #     questionCount = each_section.count("?")
-        #     hashtagCount = each_section.count("#")
-
-        #     if hashtagCount <= 
-
-    # for i in range(0,len(springMap)):
-    #     withOutNewLine = springMap[i].strip("\n")
-
-    #     questionCount = springMap[i].count("?")
-    #     hashtagCount = springMap[i].count("#")
-
-    #     totalchar = 0
-    #     eachNum = springNumArray[i]
-    #     eachNum = eachNum.strip("\n")
-    #     eachNum = eachNum.split(",")
-    #     print(eachNum)
-    #     for each in eachNum:
-    #         totalchar += int(each)
-            
-    #     totalchar += len(eachNum)-1
-
-    #     Openings = totalchar - hashtagCount
-    #     print(Openings)
-
-            # print(sectionArray[j])
-
+    if j == len(givenSpringMap):
+        return True
+    else:
+        return False
 
 
 day12()
