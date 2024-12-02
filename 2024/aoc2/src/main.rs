@@ -33,16 +33,58 @@ fn first_part() -> Result<(),Error> {
 
         //else if equal, safe is already false
 
-        if safe == true{
+        if safe == true {
             num_safe += 1;
         }
 
+        println!("{line}: {safe}");
+    
+
     }
+
+    println!("Number safe: {num_safe}");
 
     Ok(())
 
 }
 
-fn safe_check(current_line_vec: <Vec<&str>>, increasing:bool){
+fn safe_check(current_line_vec: Vec<&str>, increasing:bool) -> bool{
+    let mut safe = true;
+    let mut num_unsafe = 0;
+
+    for i in 0..current_line_vec.len()-1 {
+        let mut higher_number: i32 = current_line_vec[i+1].parse().unwrap();
+        let mut below_number: i32 = current_line_vec[i].parse().unwrap();
+
+        let mut diff = higher_number - below_number;
+
+        if increasing == true{
+            if diff < 1 || diff > 3 {
+                safe = false;
+                num_unsafe += 1;
+
+            }
+        }
+
+        //decreasing
+        if increasing == false{
+
+            if diff < -3 || diff > -1 {
+                safe = false;
+                num_unsafe += 1;;
+            }
+        }
+
+        if num_unsafe > 1{
+            break;
+        }
+        
+    }
+
+    if num_unsafe <= 1{
+        safe = true;
+    }
+
+    return safe;
 
 }
