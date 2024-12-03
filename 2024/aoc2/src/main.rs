@@ -3,11 +3,11 @@ use std::io::{BufRead, BufReader, Error};
 
 
 fn main() {
-    first_part();
+    solution();
 }
 
 
-fn first_part() -> Result<(),Error> {
+fn solution() -> Result<(),Error> {
     let f = fs::File::open("input.txt")?;
     let mut reader =  BufReader::new(f);
 
@@ -16,30 +16,41 @@ fn first_part() -> Result<(),Error> {
     for line in reader.lines() {
         let line = line?;
         let mut current_line = line.split(" ").collect::<Vec<&str>>();
+        let (mut safe,mut unsafe_index) = safe_check(current_line.clone());
 
-        let mut first_num: i32 = current_line[0].parse().unwrap();
-        let mut second_num: i32 = current_line[1].parse().unwrap();
 
-        let mut increasing = false;
-        let mut safe = false;
+        if safe == false{
+            let mut new_current_line = current_line.clone();
+            new_current_line.drain(unsafe_index..unsafe_index+1);
+            let (mut safe1, mut unsafe_index1) = safe_check(new_current_line.clone());
+            safe = safe1;
 
-        if second_num > first_num {
-            increasing = true;
-            safe = safe_check(current_line,increasing)
+            if safe1 == false{
+                let mut new_current_line = current_line.clone();
+                new_current_line.drain(unsafe_index+1..unsafe_index+2);
+                let (mut safe2,mut unsafe_index2) = safe_check(new_current_line.clone());
+                safe = safe2;
+
+                if safe2 == false{
+                    if unsafe_index != 0{
+                        let mut new_current_line = current_line.clone();
+                        new_current_line.drain(unsafe_index-1..unsafe_index);
+                        let (mut safe3,mut unsafe_index3) = safe_check(new_current_line.clone());
+                        safe = safe3;
+                    }
+
+                }
+
+            }
+            
+            
+            
         }
-        else if second_num < first_num {
-            safe = safe_check(current_line,increasing)
-        }
-
-        //else if equal, safe is already false
 
         if safe == true {
             num_safe += 1;
         }
-
-        println!("{line}: {safe}");
     
-
     }
 
     println!("Number safe: {num_safe}");
@@ -48,43 +59,66 @@ fn first_part() -> Result<(),Error> {
 
 }
 
-fn safe_check(current_line_vec: Vec<&str>, increasing:bool) -> bool{
+
+fn check_increasing_or_decreasing(current_line_vec: Vec<&str>) -> String {
+    let mut first_num: i32 = current_line_vec[0].parse().unwrap();
+    let mut second_num: i32 = current_line_vec[1].parse().unwrap();
+
+    let mut increasing = false;
+
+    if second_num > first_num {
+        increasing = true;
+        return String::from("increasing");
+    }
+    else if second_num < first_num {
+        return String::from("decreasing");
+    }
+    else{
+        return String::from("same");
+    }
+
+}
+
+fn safe_check(current_line_vec: Vec<&str>) -> (bool,usize){
+
     let mut safe = true;
     let mut num_unsafe = 0;
 
+    let mut pattern:String = check_increasing_or_decreasing(current_line_vec.clone());
+
+    let mut index:usize = 0;
+
     for i in 0..current_line_vec.len()-1 {
-        let mut higher_number: i32 = current_line_vec[i+1].parse().unwrap();
+        index = i;
+        let mut next_number: i32 = current_line_vec[i+1].parse().unwrap();
         let mut below_number: i32 = current_line_vec[i].parse().unwrap();
 
-        let mut diff = higher_number - below_number;
+        let mut diff = next_number - below_number;
 
-        if increasing == true{
+        if pattern == "increasing"{
             if diff < 1 || diff > 3 {
                 safe = false;
-                num_unsafe += 1;
-
+                break;
             }
         }
 
         //decreasing
-        if increasing == false{
+        if pattern == "decreasing"{
 
             if diff < -3 || diff > -1 {
                 safe = false;
-                num_unsafe += 1;;
+                break;
             }
         }
 
-        if num_unsafe > 1{
+        if pattern == "same"{
+            safe = false;
             break;
         }
-        
-    }
 
-    if num_unsafe <= 1{
-        safe = true;
     }
+    
 
-    return safe;
+    return (safe,index);
 
 }

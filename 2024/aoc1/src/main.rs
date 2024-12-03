@@ -50,9 +50,6 @@ fn difference(){
 
     let num_lines = contents.lines().count();
 
-
-    println!("{contents}");
-
     let num_collection = contents.split_whitespace().collect::<Vec<&str>>();
     let mut split_vectors_left: Vec<i32> = Vec::new();
     let mut split_vectors_right: Vec<i32> = Vec::new();
