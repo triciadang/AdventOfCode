@@ -20,9 +20,13 @@ fn main() {
         println!("{:?}",x_indices);
 
         for each_index in x_indices{
-            xmas_exist = check_horizontal(lines,i,each_index);
+            xmas_exist = check_horizontal(lines.clone(),i,each_index);
             if xmas_exist == false{
                 
+            }
+            else{
+                println!("{}",xmas_exist)
+
             }
         }
 
@@ -31,17 +35,15 @@ fn main() {
 }
 
 fn check_horizontal(lines:Vec<String>, x:usize, y:usize) -> bool {
-
-    if let Some(line) = lines.get(x){
-        if let Some(character) = line.chars().nth(y) {
-            if character == 'M'{
-                println!("here");
+    lines.get(x)
+        .and_then(|line| {
+            // let chars: Vec<char> = line.chars().collect();
+            if y+3 < line.len(){
+                Some(&line[y..=y+3])
             }
-        }
-        else{
-            return false;
-        }
-    }
-
-    return true;
+            else{
+                None
+            }
+        })
+        .map_or(false,|slice| slice == "MAS")
 }
