@@ -19,43 +19,36 @@ fn main() {
 
 
     while out_of_bounds == false{
-        if direction == String::from("N"){
-            let temp_lines = lines.clone();
-            let (new_line,new_index,out_of_bounds_flag,new_lines) = move_north(current_line,current_index,temp_lines);
-            current_line = new_line;
-            current_index = new_index;
-            out_of_bounds = out_of_bounds_flag;
-            lines = new_lines;
+        
+        let temp_lines = lines.clone();
+        let mut temp_dir = &direction;
+        let (new_line,new_index,out_of_bounds_flag,new_lines) = move_us(current_line,current_index,temp_lines,temp_dir);
+        current_line = new_line;
+        current_index = new_index;
+        out_of_bounds = out_of_bounds_flag;
+        lines = new_lines;
+
+        if direction == "N"{
             direction = String::from("E");
         }
         else if direction == "E"{
-            let temp_lines = lines.clone();
-            let (new_line,new_index,out_of_bounds_flag,new_lines) = move_east(current_line,current_index,temp_lines);
-            current_line = new_line;
-            current_index = new_index;
-            out_of_bounds = out_of_bounds_flag;
-            lines = new_lines;
+            println!("jj");
             direction = String::from("S");
         }
         else if direction == "S"{
-            let temp_lines = lines.clone();
-            let (new_line,new_index,out_of_bounds_flag,new_lines) = move_south(current_line,current_index,temp_lines);
-            current_line = new_line;
-            current_index = new_index;
-            out_of_bounds = out_of_bounds_flag;
-            lines = new_lines;
+            
             direction = String::from("W");
         }
         else if direction == "W"{
-            let temp_lines = lines.clone();
-            let (new_line,new_index,out_of_bounds_flag,new_lines) = move_west(current_line,current_index,temp_lines);
-            current_line = new_line;
-            current_index = new_index;
-            out_of_bounds = out_of_bounds_flag;
-            lines = new_lines;
             direction = String::from("N");
         }
+
+        for each in lines.iter(){
+        println!("{:?}",each);
+        }
+        println!("{}",out_of_bounds);
     }
+
     let temp_lines = lines.clone();
     let mut num_of_symbols = 0;
 
@@ -67,10 +60,11 @@ fn main() {
 
 }
 
-fn move_west(
+fn move_us(
     mut current_line:usize,
     mut current_index:usize,
-    lines: Vec<String>) 
+    lines: Vec<String>,
+    mut direction:&String)
 -> (usize,usize,bool,Vec<String>) {
 
     let all_lines_counts = &lines.len();
@@ -81,19 +75,39 @@ fn move_west(
     while current_line < *all_lines_counts
     && current_index < *line_length
     {
-        if current_index != 0{
-            if let Some(result_n) = new_line.get(current_line)
-                    .and_then(|line| line.chars().nth(current_index-1)) {
+        if current_index != 0 && current_line != 0 {
+            let mut temp_current_index = current_index;
+            let mut temp_current_line = current_line;
+
+
+
+            if direction == "W"{
+                temp_current_index = current_index - 1;
+            }
+            if direction == "S"{
+                temp_current_line = current_line + 1;
+            }
+            if direction == "E"{
+                temp_current_index = current_index + 1;
+            }
+            if direction == "N"{
+                temp_current_line = current_line - 1;
+            }
+
+            // println!("{}",temp_current_line);
+
+            if let Some(result_n) = new_line.get(temp_current_line)
+                    .and_then(|line| line.chars().nth(temp_current_index.clone())) {
 
                 if result_n == '#' {
                     return (current_line,current_index,false,new_line);
                 }
                 else{
 
-                    if let Some(line) = new_line.get_mut(current_line) {
+                    if let Some(line) = new_line.get_mut(temp_current_line) {
                         let mut chars: Vec<char> = line.chars().collect();
                         if current_index < chars.len() {
-                            chars[current_index-1] = '^';
+                            chars[temp_current_index] = '^';
                             *line = chars.iter().collect();
                         }
                     }
@@ -104,152 +118,23 @@ fn move_west(
                             *line = chars.iter().collect();
                         }
                     }
+                    if direction == "W"{
                         current_index -= 1;
-                }
-            }
-        }
-        else{
-            break;
-        }
-    }
-    return (current_line,current_index,true,new_line);
-}
-
-fn move_east(
-    mut current_line:usize,
-    mut current_index:usize,
-    lines: Vec<String>) 
--> (usize,usize,bool,Vec<String>) {
-
-    let all_lines_counts = &lines.len();
-    let line_length = &lines.get(0).unwrap().len();
-    let mut new_line:Vec<String> = lines;
-    
-
-    while current_line < *all_lines_counts
-    && current_index < *line_length
-    {
-        if let Some(result_n) = new_line.get(current_line)
-                .and_then(|line| line.chars().nth(current_index+1)) {
-
-            if result_n == '#' {
-                return (current_line,current_index,false,new_line);
-            }
-            else{
-
-                if let Some(line) = new_line.get_mut(current_line) {
-                    let mut chars: Vec<char> = line.chars().collect();
-                    if current_index < chars.len() {
-                        chars[current_index+1] = '^';
-                        *line = chars.iter().collect();
                     }
-                }
-                if let Some(line) = new_line.get_mut(current_line) {
-                    let mut chars: Vec<char> = line.chars().collect();
-                    if current_index < chars.len() {
-                        chars[current_index] = 'X';
-                        *line = chars.iter().collect();
+                    if direction == "S"{
+                        current_line += 1;
+
                     }
-                }
-                current_index += 1;            
-            }  
-        }
-        else{
-            break;
-        }
-    }
-    return (current_line,current_index,true,new_line);
-}
-
-
-fn move_south(
-    mut current_line:usize,
-    mut current_index:usize,
-    lines: Vec<String>) 
--> (usize,usize,bool,Vec<String>) {
-
-    let all_lines_counts = &lines.len();
-    let line_length = &lines.get(0).unwrap().len();
-    let mut new_line:Vec<String> = lines;
-    
-
-    while current_line < *all_lines_counts
-    && current_index < *line_length
-    {
-        if let Some(result_n) = new_line.get(current_line+1)
-                .and_then(|line| line.chars().nth(current_index)) {
-
-            if result_n == '#' {
-                return (current_line,current_index,false,new_line);
-            }
-            else{
-
-                if let Some(line) = new_line.get_mut(current_line+1) {
-                    let mut chars: Vec<char> = line.chars().collect();
-                    if current_index < chars.len() {
-                        chars[current_index] = '^';
-                        *line = chars.iter().collect();
+                    if direction == "E"{
+                        current_index += 1;
                     }
-                }
-                if let Some(line) = new_line.get_mut(current_line) {
-                    let mut chars: Vec<char> = line.chars().collect();
-                    if current_index < chars.len() {
-                        chars[current_index] = 'X';
-                        *line = chars.iter().collect();
-                    }
-                }
-                current_line += 1;        
-            }  
-        }
-        else{
-            break;
-        }
-    }
-    return (current_line,current_index,true,new_line);
-}
-
-fn move_north(
-    mut current_line:usize,
-    mut current_index:usize,
-    lines: Vec<String>) 
--> (usize,usize,bool,Vec<String>) {
-
-    let all_lines_counts = &lines.len();
-    let line_length = &lines.get(0).unwrap().len();
-    let mut new_line:Vec<String> = lines;
-    
-
-    while current_line < *all_lines_counts
-    && current_line >= 0
-    && current_index < *line_length
-    && current_index >= 0 
-    {
-        if current_line != 0{
-            if let Some(result_n) = new_line.get(current_line - 1)
-                    .and_then(|line| line.chars().nth(current_index)) {
-
-                if result_n == '#' {
-                    return (current_line,current_index,false,new_line);
-                }
-                else{
-
-                    if let Some(line) = new_line.get_mut(current_line-1) {
-                        let mut chars: Vec<char> = line.chars().collect();
-                        if current_index < chars.len() {
-                            chars[current_index] = '^';
-                            *line = chars.iter().collect();
-                        }
-                    }
-                    if let Some(line) = new_line.get_mut(current_line) {
-                        let mut chars: Vec<char> = line.chars().collect();
-                        if current_index < chars.len() {
-                            chars[current_index] = 'X';
-                            *line = chars.iter().collect();
-                        }
-                    }
+                    if direction == "N"{
                         current_line -= 1;
-
+                    }
                 }
+            }
+            else{
+                break;
             }
         }
         else{
@@ -258,6 +143,7 @@ fn move_north(
     }
     return (current_line,current_index,true,new_line);
 }
+
 
 
 fn find_initial_pos(lines:Vec<String>) -> (usize,usize){
