@@ -83,6 +83,5 @@ def test_number(num_array,answer_req):
     return False
         
     
-
-        
-main()
+if __name__ == '__main__':       
+    main()
