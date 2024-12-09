@@ -52,25 +52,19 @@ fn check_loops(i:usize,j:usize,other_lines: Vec<String>)->bool{
     }
 
     let mut hit_same_vector_dir = false;
-    let mut all_vectors = Vec::new();
 
     while out_of_bounds == false && hit_same_vector_dir == false{
         
         let temp_lines = lines.clone();
         let mut temp_dir = direction.clone();
-        let (new_line,new_index,out_of_bounds_flag,new_lines,temp_vectors) = 
+        let mut hit_loop:bool = false;
+        let (new_line,new_index,out_of_bounds_flag,new_lines,hit_loop) = 
                             move_us2(current_line,current_index,temp_lines,temp_dir);
 
-        for each in temp_vectors{
-            if all_vectors.contains(&each){
-                hit_same_vector_dir = true;
-                return true;
-            }
-            else{
-                all_vectors.push(each);
-                    
-            }
+        if hit_loop == true{
+            return true;
         }
+
         current_line = new_line;
         current_index = new_index;
         out_of_bounds = out_of_bounds_flag;
@@ -100,12 +94,11 @@ fn move_us2(
     mut current_index:usize,
     lines: Vec<String>,
     mut direction:String)
--> (usize,usize,bool,Vec<String>,Vec<(usize, usize, String)>) {
+-> (usize,usize,bool,Vec<String>,bool) {
 
     let all_lines_counts = &lines.len();
     let line_length = &lines.get(0).unwrap().len();
     let mut new_line:Vec<String> = lines;
-    let mut all_vectors = Vec::new();
     
 
     while current_line < *all_lines_counts
@@ -129,15 +122,13 @@ fn move_us2(
                 temp_current_line = current_line - 1;
             }
 
-            // println!("{}",temp_current_line);
-
             if let Some(result_n) = new_line.get(temp_current_line)
                     .and_then(|line| line.chars().nth(temp_current_index.clone())) {
 
                 if result_n == '#' {
-                    return (current_line,current_index,false,new_line,all_vectors);
+                    return (current_line,current_index,false,new_line,false);
                 }
-                else{
+                else if result_n != direction.chars().next().expect("string is empty"){
 
                     if let Some(line) = new_line.get_mut(temp_current_line) {
                         let mut chars: Vec<char> = line.chars().collect();
@@ -149,8 +140,7 @@ fn move_us2(
                     if let Some(line) = new_line.get_mut(current_line) {
                         let mut chars: Vec<char> = line.chars().collect();
                         if current_index < chars.len() {
-                            chars[current_index] = 'X';
-                            all_vectors.push((current_line,current_index,direction.clone()));
+                            chars[current_index] = direction.chars().next().expect("string is empty");
                             *line = chars.iter().collect();
                         }
                     }
@@ -167,6 +157,10 @@ fn move_us2(
                     if direction == "N"{
                         current_line -= 1;
                     }
+
+                }
+                else{
+                    return (current_line,current_index,true,new_line,true); 
                 }
             }
             else{
@@ -177,7 +171,7 @@ fn move_us2(
             break;
         }
     }
-    return (current_line,current_index,true,new_line,all_vectors);
+    return (current_line,current_index,true,new_line,false);
 }
 
 fn part1(other_lines: Vec<String>){
