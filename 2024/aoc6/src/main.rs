@@ -10,13 +10,183 @@ fn lines_from_file(filename: impl AsRef<Path>) -> io::Result<Vec<String>> {
 
 fn main() {
     let file_name = String::from("input.txt");
-    let mut lines = lines_from_file(file_name).expect("Could not load lines");
+    let mut lines = lines_from_file(file_name).expect("Could not load lines");    
 
+    // part1(lines);
+
+    let copied_lines = lines.clone();
+    let line_length = copied_lines.get(0).unwrap().len();
+
+    let mut check_loops_count = 0;
+
+    for i in 0..lines.len(){
+        println!("i: {}", i);
+        for j in 0..line_length{
+            let temp_lines = lines.clone();
+            if check_loops(i,j,temp_lines){
+                println!("i: {}, j: {}", i, j);
+                check_loops_count+=1;
+            }
+        }
+    }
+
+    println!("Loop Count: {}",check_loops_count);
+
+}
+
+struct VectorDir(usize,usize,String);
+
+fn check_loops(i:usize,j:usize,other_lines: Vec<String>)->bool{
+    let mut lines = other_lines;
     let (mut current_line,mut current_index) = find_initial_pos(lines.clone());
+    let mut all_movements:Vec<VectorDir>;
 
     let mut direction = String::from("N");
     let mut out_of_bounds = false;
+    
+    // change lines
+    if let Some(line) = lines.get_mut(i) {
+        let mut chars: Vec<char> = line.chars().collect();
+        chars[j] = '#';
+        *line = chars.iter().collect();
+    }
 
+    let mut hit_same_vector_dir = false;
+    let mut all_vectors = Vec::new();
+
+    while out_of_bounds == false && hit_same_vector_dir == false{
+        
+        let temp_lines = lines.clone();
+        let mut temp_dir = direction.clone();
+        let (new_line,new_index,out_of_bounds_flag,new_lines,temp_vectors) = 
+                            move_us2(current_line,current_index,temp_lines,temp_dir);
+
+        for each in temp_vectors{
+            if all_vectors.contains(&each){
+                hit_same_vector_dir = true;
+                return true;
+            }
+            else{
+                all_vectors.push(each);
+                    
+            }
+        }
+        current_line = new_line;
+        current_index = new_index;
+        out_of_bounds = out_of_bounds_flag;
+        lines = new_lines;
+
+        if direction == "N"{
+            direction = String::from("E");
+        }
+        else if direction == "E"{
+            direction = String::from("S");
+        }
+        else if direction == "S"{
+            
+            direction = String::from("W");
+        }
+        else if direction == "W"{
+            direction = String::from("N");
+        }
+
+    }
+
+    return false;
+}
+
+fn move_us2(
+    mut current_line:usize,
+    mut current_index:usize,
+    lines: Vec<String>,
+    mut direction:String)
+-> (usize,usize,bool,Vec<String>,Vec<(usize, usize, String)>) {
+
+    let all_lines_counts = &lines.len();
+    let line_length = &lines.get(0).unwrap().len();
+    let mut new_line:Vec<String> = lines;
+    let mut all_vectors = Vec::new();
+    
+
+    while current_line < *all_lines_counts
+    && current_index < *line_length
+    {
+        if current_index != 0 && current_line != 0 {
+            let mut temp_current_index = current_index;
+            let mut temp_current_line = current_line;
+            let mut temp_direction = direction.clone();
+
+            if temp_direction == "W"{
+                temp_current_index = current_index - 1;
+            }
+            if temp_direction == "S"{
+                temp_current_line = current_line + 1;
+            }
+            if temp_direction == "E"{
+                temp_current_index = current_index + 1;
+            }
+            if temp_direction == "N"{
+                temp_current_line = current_line - 1;
+            }
+
+            // println!("{}",temp_current_line);
+
+            if let Some(result_n) = new_line.get(temp_current_line)
+                    .and_then(|line| line.chars().nth(temp_current_index.clone())) {
+
+                if result_n == '#' {
+                    return (current_line,current_index,false,new_line,all_vectors);
+                }
+                else{
+
+                    if let Some(line) = new_line.get_mut(temp_current_line) {
+                        let mut chars: Vec<char> = line.chars().collect();
+                        if current_index < chars.len() {
+                            chars[temp_current_index] = '^';
+                            *line = chars.iter().collect();
+                        }
+                    }
+                    if let Some(line) = new_line.get_mut(current_line) {
+                        let mut chars: Vec<char> = line.chars().collect();
+                        if current_index < chars.len() {
+                            chars[current_index] = 'X';
+                            all_vectors.push((current_line,current_index,direction.clone()));
+                            *line = chars.iter().collect();
+                        }
+                    }
+                    if direction == "W"{
+                        current_index -= 1;
+                    }
+                    if direction == "S"{
+                        current_line += 1;
+
+                    }
+                    if direction == "E"{
+                        current_index += 1;
+                    }
+                    if direction == "N"{
+                        current_line -= 1;
+                    }
+                }
+            }
+            else{
+                break;
+            }
+        }
+        else{
+            break;
+        }
+    }
+    return (current_line,current_index,true,new_line,all_vectors);
+}
+
+fn part1(other_lines: Vec<String>){
+    let mut lines = other_lines;
+    let (mut current_line,mut current_index) = find_initial_pos(lines.clone());
+    
+
+    let mut direction = String::from("N");
+    let mut out_of_bounds = false;
 
     while out_of_bounds == false{
         
@@ -32,7 +202,6 @@ fn main() {
             direction = String::from("E");
         }
         else if direction == "E"{
-            println!("jj");
             direction = String::from("S");
         }
         else if direction == "S"{
@@ -57,8 +226,9 @@ fn main() {
         num_of_symbols += each_line.chars().filter(|x| *x=='^').count();
     }
     println!("Number of Marks: {}",num_of_symbols);
-
+    return
 }
+
 
 fn move_us(
     mut current_line:usize,
