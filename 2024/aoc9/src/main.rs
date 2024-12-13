@@ -44,7 +44,7 @@ fn part_2(input_line:String) -> i128{
     }
 
     while frontwards_index <= backwards_index{
-        println!{}
+        println!("{}",frontwards_index);
         let mut length_of_first_file:usize = current_line.chars().nth(frontwards_index).and_then(|c| c.to_digit(10)).map(|d| d as usize).unwrap();
         //represents non blanks
         if frontwards_index % 2 == 0{
@@ -128,12 +128,6 @@ fn part_2(input_line:String) -> i128{
                         first_back_char_int = char::to_digit(first_back_char.clone(),10)
                                                                                     .map(|val| val as usize)
                                                                                     .unwrap();
-                    }
-                    if backwards_index < frontwards_index{
-                        for i in 0..length_needed{
-                            new_string.push(".".to_string());
-                        }
-                        length_needed = 0;
                     }
                 }
             }
