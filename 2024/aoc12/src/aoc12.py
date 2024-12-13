@@ -1,109 +1,90 @@
-import collections
+from collections import deque
 
-class Graph:
-    def __init__(self):
-        self.graph = defaultdict(list)
+# Movement directions (up, down, left, right)
+DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
 
-    def addEdge(self,u,v):
-        self.graph[u].append(v)
+def bfs(row, col, grid, visited,each_plant):
+      
+	# Shorthand for the size of the grid
+    num_of_lines = len(grid)
+    line_length = len(grid[0])
+    queue = deque()
+    
+    queue.append((row, col))  # Start BFS from the given cell (row, col)
 
-    def BFS(self,s):
-        visited = [False] * (max(self.graph))+1
+    area = 0
+    perimeter = 0
 
-        queue = []
+    while queue:
+        row, col = queue.popleft()  # Current cell (row, col)
 
-        queue.append(s)
-        visited[s] = True
-        
-        while queue:
-            s=queue.pop(0)
+		# Skip if the cell has already been visited
+        if visited[row][col]:
+             continue
+    
+        visited[row][col] = True  # Mark the cell (row, col) as visited
+        area += 1  # Increment area (each '#' contributes 1 to the area)
 
-            print(s,end=" ")
+		# Each cell starts with 4 sides contributing to the perimeter
+        sides = 4
+        for dx, dy in DIRECTIONS:
+            next_row = row + dx
+            next_col = col + dy
 
-            for i in self.graph[s]:
-                if i not in visited[i]:
-                    queue.append(i)
-                    visited[i] = True
+			# Check if the neighboring cell is within the grid
+            if 0 <= next_row < num_of_lines and 0 <= next_col < line_length:
+				# If the neighbor (next_row, next_col) is part of the same blob
+                if grid[next_row][next_col] == each_plant:
+					# Add the neighbor (next_row, next_col) to the queue
+                    queue.append((next_row, next_col))
+                    
+                    sides -= 1  # Shared edges reduce the perimeter contribution
+                    
+        perimeter += sides  # Add remaining sides to the perimeter
+
+    return (area, perimeter)
+
 
 def main():
-    with open("input.txt") as f:
-        n = int(f.readline().strip())
-        lines = [f.readline().strip() for _ in range(n)]
+    with open("input.txt","r") as f:
+        lines = f.readlines()
 
-    number_of_lines = len(lines)
-    number_of_indices = len(lines[0])
+    line_length = len(lines[0].strip())
+    print(line_length)
+    visited = []
+    all_plants = []
+    grid = []
+    total = 0
 
-    list_of_zeroes = []
-    list_of_nines = []
+    for line in lines:
+        visited.append([False]*(line_length))
+        grid.append(list(line.strip()))
+        for each_index in line.strip():
+              if each_index not in all_plants:
+                    all_plants.append(each_index)
+        
 
-    for i in range(0,number_of_lines):
-        for j in range(0,number_of_indices):
+    print(visited)
+    print(grid)
+    print(all_plants)
 
-            str_i = str(i)
-            str_j = str(j)
-            node1 = f"{lines[i][j]}-{str_i}-{str_j}"
-            current_value_int = int(lines[i][j])
+    area = 0
+    perimeter = 0
 
+    for each_plant in all_plants:
+        for i in range(0,len(lines)):
+            for j in range(0,line_length):
+                if grid[i][j] != each_plant or visited[i][j]:
+                    continue
+                area, perimeter = bfs(i, j, grid, visited,each_plant)
 
-            if lines[i][j] == '0':
-                list_of_zeroes.append(f"{node1}")
-            if lines[i][j] == '9':
-                list_of_nines.append(f"{node1}")
+                total += area * perimeter
+                print(f"Plant: {each_plant}, Area: {area}, Perimeter: {perimeter}")
 
-            #check above
-            if i-1 >= 0:
-                if int(lines[i-1][j]) == current_value_int+1:
-                    str_i = str(i-1)
-                    str_j = str(j)
-                    node2 = f"{lines[i-1][j]}-{str_i}-{str_j}"
-                    g.add_edge(node1,node2)
-                    print(node1,node2)
-
-            #check below
-            if i+1 < number_of_lines:
-                if int(lines[i+1][j]) == current_value_int+1:
-                    str_i = str(i+1)
-                    str_j = str(j)
-                    node2 = f"{lines[i+1][j]}-{str_i}-{str_j}"
-                    g.add_edge(node1,node2)
-                    print(node1,node2)
-
-            #check left
-            if j-1 >= 0:
-                if int(lines[i][j-1]) == current_value_int+1:
-                    str_i = str(i)
-                    str_j = str(j-1)
-                    node2 = f"{lines[i][j-1]}-{str_i}-{str_j}"
-                    g.add_edge(node1,node2)
-                    print(node1,node2)
-
-            #check right
-            if j+1 < number_of_indices:
-                if int(lines[i][j+1]) == current_value_int+1:
-                    str_i = str(i)
-                    str_j = str(j+1)
-                    node2 = f"{lines[i][j+1]}-{str_i}-{str_j}"
-                    g.add_edge(node1,node2)
-                    print(node1,node2)
+        
+    print(total)
 
 
-    visited = [[False] * n for _ in range(n)]
-
-    max_area = 0
-    min_perimeter = float("inf")
-
-    for i in range(n):
-        for j in range(n):
-            if lines[i][j] != "A" or visited[i][j]:
-                continue
-
-            area,perimeter = g.BFS(lines)
-
-            if area > max_area or (area == max_area and perimeter < min_perimeter):
-                max_area = area
-                min_perimeter = perimeter
-
-                
 if __name__ == '__main__':
     main()
