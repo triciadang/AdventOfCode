@@ -28,25 +28,19 @@ def main():
 
     first_value = 8**15
     first_value = 37383403556864
-    # first_value = 69000000000000
-    # 0 - 8**13
-    #69818988363776
-    #70368744177664
-    #8246337208320
-    #8526860472320
-    #35190017445888
-    #36830694952960
-    #37389040701440
 
-    #2,4,1,2,7,5,1,3,4,3,5,5,0,3,3,0
-    #1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,0
-    #3,6,5,1,1,5,1,3,4,1,4,5,0,5,4,6
+    #Tried each range with varying powers of 8 until there was blocks/patterns of correct entries
+    #Kept decreasing the range until I could go by 1 efficiently
+    
+    #First iteration: 8**15, 8**16, 7
+    # 36283883716608, 39032662786048, 10
+    # 37220186587136, 37222334070784, 6
+    # 37221334220800, 37221334974464, 0
 
-    #36833639530496 37383395344384
-    #37222144522740
-    #38878530661888 38878799724544
-    #38886097027072 38886633635840
-    for i in range(37222144509440,37222144539136):
+    # Answer: 37221334433268
+
+    pow_of_8 = 0
+    for i in range(37221334220800,37221334974464,8**pow_of_8):
         print(i)
         A = i
 
@@ -56,8 +50,7 @@ def main():
             print(i)
             break
 
-    #38886633897984
-    #38885543378944
+    # tried finding it through each digit
     # match_back_char_index = len(instruction)-1
     # i = match_back_char_index-1
     # starting_value = 8**(len(instruction))
