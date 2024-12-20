@@ -1,83 +1,16 @@
 from collections import deque
-<<<<<<< HEAD
-from typing import List, Tuple
-=======
->>>>>>> e2155031fac993b83fce931b20a9daade4476119
 
 # Movement directions (up, down, left, right)
 DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
 
-<<<<<<< HEAD
-def bfs(
-	row: int, col: int, grid: List[str], visited: List[List[bool]]
-) -> Tuple[int, int]:
-	# Shorthand for the size of the grid
-	n = len(grid)
-
-	queue = deque()
-	queue.append((row, col))  # Start BFS from the given cell (row, col)
-
-	area = 0
-	perimeter = 0
-
-	while queue:
-		row, col = queue.popleft()  # Current cell (row, col)
-
-		# Skip if the cell has already been visited
-		if visited[row][col]:
-			continue
-
-		visited[row][col] = True  # Mark the cell (row, col) as visited
-		area += 1  # Increment area (each '#' contributes 1 to the area)
-
-		# Each cell starts with 4 sides contributing to the perimeter
-		sides = 4
-		for dx, dy in DIRECTIONS:
-			next_row = row + dx
-			next_col = col + dy
-
-			# Check if the neighboring cell is within the grid
-			if 0 <= next_row < n and 0 <= next_col < n:
-				# If the neighbor (next_row, next_col) is part of the same blob
-				if grid[next_row][next_col] == "A":
-					# Add the neighbor (next_row, next_col) to the queue
-					queue.append((next_row, next_col))
-					sides -= 1  # Shared edges reduce the perimeter contribution
-
-		perimeter += sides  # Add remaining sides to the perimeter
-
-	return area, perimeter
-
-
-with open("input.txt", "r") as fin:
-	n = int(fin.readline().strip())
-	grid = [fin.readline().strip() for _ in range(n)]
-
-visited = [[False] * n for _ in range(n)]
-
-max_area = 0
-min_perimeter = -99999999999
-for i in range(n):
-	for j in range(n):
-		if grid[i][j] != "A" or visited[i][j]:
-			continue
-
-		area, perimeter = bfs(i, j, grid, visited)
-
-		# Update max_area and min_perimeter based on the BFS results
-		if area > max_area or (area == max_area and perimeter < min_perimeter):
-			max_area = area
-			min_perimeter = perimeter
-
-print(f"{max_area} {min_perimeter}")
-=======
-def bfs(row, col, grid, visited,each_plant):
+def bfs(row, col, grid, visited, each_plant):
       
 	# Shorthand for the size of the grid
     num_of_lines = len(grid)
     line_length = len(grid[0])
     queue = deque()
+    all_coords = []
     
     queue.append((row, col))  # Start BFS from the given cell (row, col)
 
@@ -104,6 +37,9 @@ def bfs(row, col, grid, visited,each_plant):
             if 0 <= next_row < num_of_lines and 0 <= next_col < line_length:
 				# If the neighbor (next_row, next_col) is part of the same blob
                 if grid[next_row][next_col] == each_plant:
+                    # Add coord to array
+                    all_coords.append((next_row,next_col,dx,dy))
+
 					# Add the neighbor (next_row, next_col) to the queue
                     queue.append((next_row, next_col))
                     
@@ -111,7 +47,7 @@ def bfs(row, col, grid, visited,each_plant):
                     
         perimeter += sides  # Add remaining sides to the perimeter
 
-    return (area, perimeter)
+    return (area, perimeter,all_coords)
 
 
 def main():
@@ -145,7 +81,13 @@ def main():
             for j in range(0,line_length):
                 if grid[i][j] != each_plant or visited[i][j]:
                     continue
-                area, perimeter = bfs(i, j, grid, visited,each_plant)
+                area, perimeter,all_coords = bfs(i, j, grid, visited,each_plant)
+
+                print(all_coords)
+                # for i in range(len(all_coords)-1):
+                #     for j in range(i+1,len(all_coords)):
+
+
 
                 total += area * perimeter
                 print(f"Plant: {each_plant}, Area: {area}, Perimeter: {perimeter}")
@@ -156,4 +98,3 @@ def main():
 
 if __name__ == '__main__':
     main()
->>>>>>> e2155031fac993b83fce931b20a9daade4476119
