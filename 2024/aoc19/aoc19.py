@@ -1,6 +1,4 @@
 import functools
-from itertools import permutations
-
 
 def main():
     with open("input.txt") as f:
@@ -10,38 +8,43 @@ def main():
     chunk_list = all_chunks.split(", ")
     phrase_list = phrases.split("\n")
 
-    global max_length
-    max_length = 0
-    for each in chunk_list:
-        if len(each) > max_length:
-            max_length = len(each)
-
+    overall_count = 0
     phrase_count = 0
 
     for each_phrase in phrase_list:
-        print(each_phrase)
         if check_function(each_phrase):
-             phrase_count += 1
-
+            phrase_count += 1
+            overall_count += (part_2(each_phrase))
             
     print(phrase_count)
+    print(overall_count)
 
 @functools.cache
 def check_function(entry):
-    queue = [entry]
-    while len(queue) != 0:
-        entry = queue.pop()
-        for i in range(max_length,0,-1):
-            if entry[0:i] in chunk_list:
-                if entry[i:] == '':
-                    chunk_list.append(entry[0:i])
-                    queue = []
-                    return True
-                else:
-                    queue.append(entry[i:])
+    global chunk_list
+    if len(entry)==0:
+        return True
+    else:
+        for each_chunk in chunk_list:
+            if entry.startswith(each_chunk):
+                if check_function(entry.removeprefix(each_chunk)):
 
+                    return True
+                    
     return False
 
-    print(phrase_count)
+@functools.cache
+def part_2(entry):
+    global chunk_list
+    if len(entry)==0:
+        return 1
+    else:
+        count = 0
+        for each_chunk in chunk_list:
+            if entry.startswith(each_chunk):
+                count += part_2(entry.removeprefix(each_chunk))
+                    
+    return count
+
 if __name__ == '__main__':
     main()
